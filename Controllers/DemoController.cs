@@ -4,23 +4,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Cors;
 
 namespace AspNetCoreCORSDemo.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SampleController : ControllerBase
+    [EnableCors("Public")]  //  Overrides global policy. Can also be applied to method level
+    public class DemoController : ControllerBase
     {
-        [HttpGet]
         public IActionResult Get()
         {
-            return Ok(new {Message = "Hi there!"});
-        }
-
-        [HttpPost]
-        public IActionResult Post()
-        {
-            return Ok(new {Message = "Sample Controller: POST OK"});
+            return Ok(new {message = "Demo Controller: OK"});
         }
     }
 }

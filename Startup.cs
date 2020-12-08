@@ -26,15 +26,28 @@ namespace AspNetCoreCORSDemo
         {
             var allowedOrigins = Configuration.GetSection("AllowedOrigins").Get<string[]>();
             services.AddCors(
-                options => options.AddPolicy(
-                    "NamedPolicy", builder =>
-                            {
-                                builder
-                                    .WithOrigins(allowedOrigins)
-                                    .AllowAnyMethod()
-                                    .AllowAnyHeader();
-                            }
-                    )
+                options =>
+                {
+                    
+                    options.AddPolicy(
+                        "AppFrontendPolicy", builder =>
+                        {
+                            builder
+                                .WithOrigins(allowedOrigins)
+                                .AllowAnyMethod()
+                                .AllowAnyHeader();
+                        }
+                    );
+                    options.AddPolicy(
+                        "Public", builder =>
+                        {
+                            builder
+                                .AllowAnyOrigin()
+                                .WithMethods("GET", "OPTIONS", "HEAD")
+                                .WithHeaders("Content-Type");
+                        }
+                    );
+                }
                 );
 
             services.AddControllers();
@@ -48,10 +61,13 @@ namespace AspNetCoreCORSDemo
                 app.UseDeveloperExceptionPage();
             }
             
-            app.UseCors("NamedPolicy");
+            
 
             app.UseRouting();
 
+            //  Cors middleware should be placed between UseRouting and Endpoints
+            //  This now is the global policy
+            app.UseCors("AppFrontendPolicy");
             
             app.UseAuthorization();
 
