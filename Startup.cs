@@ -24,6 +24,22 @@ namespace AspNetCoreCORSDemo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //  To enable CORS, the steps are straightforward
+            //  1.  Create a policy in ConfigureServices
+            //  2.  Build the policy
+            //  3.  Use the policy in the CORS middleware in Configure
+            services.AddCors(
+                options => options.AddPolicy(
+                    "NamedPolicy", builder =>
+                            {
+                                builder
+                                    .AllowAnyOrigin()
+                                    .AllowAnyMethod()
+                                    .AllowAnyHeader();
+                            }
+                    )
+                );
+
             services.AddControllers();
         }
 
@@ -34,9 +50,12 @@ namespace AspNetCoreCORSDemo
             {
                 app.UseDeveloperExceptionPage();
             }
+            
+            app.UseCors("NamedPolicy");
 
             app.UseRouting();
 
+            
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
